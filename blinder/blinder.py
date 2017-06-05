@@ -118,6 +118,7 @@ async def control_blinder(controller):
     async for event in button_presses():
         controller.write(b'l')
         controller.flush()
+        write_output(button="lift")
 
 async def drain(agen):
     async for _ in agen:

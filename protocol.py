@@ -153,7 +153,7 @@ async def run(blinder_path, blinder_log, control_path, logfile):
     
     async def start_blind(end):
         output(message="Press the blinder to start")
-        await wait_event(blinder_events, lambda d: d[1]['controller'].strip() == 'Lifting')
+        await wait_event(blinder_events, lambda d: d[1]['controller'].strip() == 'Handling command l')
         blinder("control")
     scenarios = dict(intro=start_intro, unblind=start_unblind, blind=start_blind)
 
