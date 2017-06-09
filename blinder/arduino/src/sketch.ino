@@ -37,18 +37,21 @@ void handle_command(char command) {
 			Serial.println("Blind mode");
 			Serial.flush();
 			control_mode = false;
+			blind_at = 0;
 			set_blind();
 			break;
 		case 'u':
 			Serial.println("Unblind mode");
 			Serial.flush();
 			control_mode = false;
+			blind_at = 0;
 			set_unblind();
 			break;
 		case 'c':
 			Serial.println("Control mode");
 			Serial.flush();
 			control_mode = true;
+			blind_at = 0;
 			set_blind();
 			break;
 		case 'l':
@@ -75,11 +78,11 @@ void serialEvent() {
 	}
 }
 
-unsigned int last_pong = 0;
+unsigned long last_pong = 0;
 
 void loop()
 {
-	unsigned int time = millis();
+	unsigned long time = millis();
 	if(control_mode && blind_at > 0) {
 		if(time > blind_at) {
 			blind_at = 0;
@@ -89,6 +92,12 @@ void loop()
 	
 	if(time - last_pong > 5000) {
 		Serial.println("pong");
+		Serial.print("control_mode: ");
+		Serial.print(control_mode);
+		Serial.print(" blind_at: ");
+		Serial.print(blind_at);
+		Serial.print(" time: ");
+		Serial.println(time);
 		Serial.flush();
 		last_pong = time;
 	}
