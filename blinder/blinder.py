@@ -15,8 +15,9 @@ import uvloop
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 #BUTTON_DEV = 'BT-005'
-BUTTON_DEV = 'IMS-FM800-BK'
-
+#BUTTON_DEV = 'IMS-FM800-BK'
+#BUTTON_DEV = 'JOBY Shutter'
+BUTTON_DEV = "Ultrathin Touch Mouse"
 def probe_button():
     for path in evdev.list_devices():
         dev = evdev.InputDevice(path)
@@ -36,8 +37,11 @@ async def button_presses():
         button = await wait_for_device()
         try:
             async for event in button.async_read_loop():
-                if event.type == 1 and event.value == 1:
-                    yield event
+                if event.type != 1: continue
+                if event.value != 1: continue
+                yield event
+                #if event.type == 1 and event.value == 1:
+                #    yield event
         except OSError:
             pass
 
@@ -84,7 +88,9 @@ async def socket_reader(path):
         os.remove(path)
     except OSError:
         pass
+    write_log(debug="Binding socket to %s"%path)
     sock.bind(path)
+    write_log(debug="Socket bound")
     
     queue = asyncio.Queue()
     def enqueue():
@@ -162,6 +168,7 @@ async def run(control=None):
     path = find_arduino()
     controller = serial.Serial(path)
     controller.baudrate = 9600
+    write_log(debug="Found arduino at %s"%path)
 
     cin = logger(serial_lines(controller))
     controller.write(b'p')
